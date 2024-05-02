@@ -10,15 +10,19 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
   const [dragging, setDragging] = useState<'min' | 'max' | null>(null);
   const rangeRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<null | 'min' | 'max'>(null);
+  const [editingMin, setEditingMin] = useState(false);
+  const [editingMax, setEditingMax] = useState(false);
+  const [minValue, setMinValue] = useState<number>(min);
+  const [maxValue, setMaxValue] = useState<number>(max);
 
   const getPercentage = useCallback(
-    (value: number) => Math.round(((value - min) / (max - min)) * 100),
-    [min, max]
+    (value: number) => Math.round(((value - minValue) / (maxValue - minValue)) * 100),
+    [minValue, maxValue]
   );
 
   const getValue = useCallback(
-    (percentage: number) => ((max - min) / 100) * percentage + min,
-    [min, max]
+    (percentage: number) => ((maxValue - minValue) / 100) * percentage + minValue,
+    [minValue, maxValue]
   );
 
   const change = useCallback(
@@ -32,7 +36,7 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
       let value = getValue(percentage);
   
       // Limit the value to the min and max
-      value = Math.max(min, Math.min(max, value));
+      value = Math.max(minValue, Math.min(maxValue, value));
   
       setRange((prev) =>
         type === 'min'
@@ -74,6 +78,21 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [handleMouseMoveDocument, handleMouseUp]);
+
+  const handleMinValueChange = () => {
+    setEditingMin(false);
+    setRange((prevRange) => ({
+      ...prevRange,
+      min: minValue > prevRange.min ? minValue : prevRange.min
+    }));
+  }
+  const handleMaxValueChange = () => {
+    setEditingMax(false);
+    setRange((prevRange) => ({
+      ...prevRange,
+      max: maxValue < prevRange.max ? maxValue : prevRange.max
+    }));
+  };
   
   return (
     <div 
@@ -86,7 +105,34 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
         alignItems: "center",
         cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
       }}
-    >
+      >
+      {editingMin ? (
+        <input
+          type="number"
+          value={minValue}
+          style={{marginRight: "20px", width: "auto"}}
+          onChange={(e) => setMinValue(Number(e.target.value))}
+          onBlur={handleMinValueChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleMinValueChange();
+            }
+          }}
+        />
+      ) : (
+        <div 
+          onClick={() => setEditingMin(true)}
+          style={{ 
+            width: "auto",
+            padding: "10px 20px",
+            fontSize: "12px",
+            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer'
+            }}
+          >
+            {minValue} €
+        </div>
+      )}
       <div
         ref={rangeRef}
         style={{
@@ -154,34 +200,15 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
           onMouseEnter={() => setHover('max')}
           onMouseLeave={() => setHover(null)}
         />
-        <div 
-          style={{ 
-            position: 'absolute', 
-            left: "-30px", 
-            top: 0, 
-            fontSize: "12px",
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
-            }}
-          >
-            {min}
-          </div>
-        <div 
-          style={{ 
-            position: 'absolute',
-            right: "-40px", 
-            top: 0, 
-            fontSize: "12px",
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
-            }}
-          >
-            {max}
-          </div>
+        
+        
       <div 
-        style={{ 
+        style={{
           position: 'absolute',
           left: `${getPercentage(range.min)-3}%`, 
           top: '30px',
           fontSize: "12px",
+          zIndex: 5,
           cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
           }}
         >
@@ -199,6 +226,34 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
           {range.max.toFixed(0)}
         </div>
       </div>
+      {editingMax ? (
+        <input
+          type="number"
+          value={maxValue}
+          style={{marginLeft: "20px", width: "auto"}}
+          onChange={(e) => setMaxValue(Number(e.target.value))}
+          onBlur={handleMaxValueChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleMaxValueChange();
+            }
+          }}
+        />
+      ) : (
+        <div 
+          onClick={() => setEditingMax(true)}
+          style={{ 
+            width: "auto",
+            margin: "0 20px",
+            fontSize: "12px",
+            zIndex: 100,
+            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer'
+            }}
+          >
+            {maxValue} €
+        </div>
+      )}
     </div>
   );
 };
