@@ -4,6 +4,8 @@ import Range from "./components/range";
 
 export default function Home() {
   return (
-        <Range min={1} max={100} />
+    <div style={{width: "100%", height: "300px", display: "flex", alignContent:"center", flexWrap:"wrap", alignItems:"center", justifyContent: "center"}}>
+        <Range min={900} max={1000} />
+    </div>
   );
 }
