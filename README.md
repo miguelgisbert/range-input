@@ -5,7 +5,7 @@ mg-range-input is a React-typescript custom range input.
 [![npm](https://img.shields.io/npm/v/mg-range-input)](https://www.npmjs.com/package/mg-range-input)
 
 <p align="center">
-  <img src="https://github.com/miguelgisbert/range-input/blob/master/public/mg-range-input.png" alt="Range input">
+  <img src="https://github.com/miguelgisbert/range-input/blob/master/public/mg-range-input.png" alt="Range input" maxWidth="400px">
 </p>
 
 ## Installation
