@@ -1,7 +1,10 @@
 {
-  "name": "range-input",
+  "name": "mg-range-input",
   "version": "0.1.0",
-  "private": true,
+  "description": "A range input component",
+  "author": "Miguel Gisbert",
+  "main": "src/components/range.tsx",
+  "license": "GPL",
   "scripts": {
     "dev": "next dev -p 8080",
     "build": "next build",
