@@ -3,10 +3,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 interface RangeProps {
   min: number;
   max: number;
+  selectableValues?: number[];
 }
 
-const Range: React.FC<RangeProps> = ({ min, max }) => {
+const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
   const [range, setRange] = useState({ min, max });
+  const [selectable, setSelectable] = useState<number[] | null>(null);
   const [dragging, setDragging] = useState<'min' | 'max' | null>(null);
   const rangeRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<null | 'min' | 'max'>(null);
@@ -27,6 +29,15 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
     [minValue, maxValue]
   );
 
+  // Set selectable values if they are received at props and they are within the min and max range
+  useEffect(() => {
+    if (selectableValues && selectableValues.every(value => value >= min && value <= max)) {
+      setSelectable(selectableValues);
+    } else {
+      setSelectable(null);
+    }
+  }, [min, max, selectableValues]);
+
   const change = useCallback(
     (clientX: number, type: 'min' | 'max') => {
       if (!rangeRef.current) return;
@@ -37,6 +48,13 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
       const percentage = (x / width) * 100;
       let value = getValue(percentage);
   
+      // If selectable values are provided, find the closest selectable value
+      if (selectable) {
+        value = selectable.reduce((prev, curr) =>
+          Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
+        );
+      }
+
       // Limit the value to the min and max
       value = Math.max(minValue, Math.min(maxValue, value));
   
@@ -46,12 +64,25 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
           : { ...prev, max: Math.max(value, prev.min) }
       );
     },
-    [getValue, min, max]
+    [getValue, min, max, selectable]
   );
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (dragging) {
+        const rect = (e.target as HTMLElement).getBoundingClientRect();
+        const x = e.clientX - rect.left; // x position within the element
+        const width = rect.right - rect.left; // width of the element
+        const percentage = x / width; // percentage of x position within the element
+        let newValue = min + (max - min) * percentage; // value corresponding to the percentage
+
+        if (selectable) {
+          // Find the closest selectable value to the new value
+          newValue = selectable.reduce((prev, curr) =>
+            Math.abs(curr - newValue) < Math.abs(prev - newValue) ? curr : prev
+          );
+        }
+
         change(e.clientX, dragging);
       }
     },
@@ -107,7 +138,7 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
   // Avoid numbers overlapping
   const [overlap, setOverlap] = useState(false);
   useEffect(() => {
-    const threshold = (maxValue - minValue) * 0.1;
+    const threshold = (maxValue - minValue) * 0.15;
     if (Math.abs(range.min - range.max) < threshold) {
       setOverlap(true);
     } else {
@@ -120,14 +151,14 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
       style={{
         display: "flex", 
         alignContent: "center",
-        height: "100%",
+        height: "100px",
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
         cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
       }}
       >
-      {editingMin ? (
+      {editingMin && !selectable ? (
         <input
           type="number"
           value={inputMinValue}
@@ -148,10 +179,10 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
             width: "auto",
             padding: "10px 20px",
             fontSize: "12px",
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer'
+            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
           >
-            {minValue}
+            {minValue.toFixed(2)} €
         </div>
       )}
       <div
@@ -168,11 +199,26 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       >
+
+        {/* Lines for selectable values */}
+        {selectable && selectable.map(value => (
+          <div 
+            style={{ 
+              position: 'absolute', 
+              height: '20px', 
+              width: '2px',
+              top: '-5px',  
+              background: value >= range.min && value <= range.max ? 'dodgerblue' : 'lightgray', 
+              left: `${getPercentage(value)}%` 
+            }} 
+          />
+        ))}
+
         <div
           style={{
             position: 'absolute',
             background: 'dodgerblue',
-            boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.8)',
+            boxShadow: '0px 0px 5px 1px rgba(0, 0, 0, 0.8)',
             height: '100%', 
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default',
             left: `${getPercentage(range.min)}%`,
@@ -188,7 +234,7 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
             background: 'white',
             borderRadius: '50%',
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer',
-            boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.8)',
+            boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
             left: `${getPercentage(range.min)}%`,
             marginLeft: '-10px',
             zIndex: maxValue - range.min < (maxValue - minValue) * 0.1 ? 10 : 0,
@@ -210,7 +256,7 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
             background: 'white',
             borderRadius: '50%',
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer',
-            boxShadow: '0px 0px 10px 5px rgba(0, 0, 0, 0.8)',
+            boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
             left: `${getPercentage(range.max)}%`,
             marginLeft: '-10px',
             zIndex: range.min - minValue < (maxValue - minValue) * 0.1 ? 10 : 0,
@@ -231,11 +277,11 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
           left: `${getPercentage(range.min)-3}%`, 
           top: overlap ? '-30px' : '30px',
           fontSize: "12px",
-          zIndex: 5,
+          whiteSpace: 'nowrap',
           cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
           }}
         >
-          {range.min.toFixed(0)}
+          {range.min.toFixed(2)} €
         </div>
         <div 
           style={{ 
@@ -243,13 +289,14 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
             left: `${getPercentage(range.max)-3}%`, 
             top: '30px', 
             fontSize: "12px",
+            whiteSpace: 'nowrap',
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
           }}
         >
-          {range.max.toFixed(0)}
+          {range.max.toFixed(2)} €
         </div>
       </div>
-      {editingMax ? (
+      {editingMax && !selectable ? (
         <input
           type="number"
           value={inputMaxValue}
@@ -271,10 +318,10 @@ const Range: React.FC<RangeProps> = ({ min, max }) => {
             margin: "0 20px",
             fontSize: "12px",
             zIndex: 100,
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer'
+            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
           >
-            {maxValue}
+            {maxValue.toFixed(2)} €
         </div>
       )}
     </div>
