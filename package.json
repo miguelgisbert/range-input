@@ -3,18 +3,16 @@
   "version": "0.1.1",
   "description": "A range input component",
   "author": "Miguel Gisbert",
-  "main": "src/components/range.tsx",
+  "main": "dist/src/app/index.js",
+  "types": "dist/index.d.ts",
   "license": "GPL",
   "scripts": {
     "dev": "next dev -p 8080",
-    "build": "next build",
+    "build": "tsc",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.2.3",
-    "next-compose-plugins": "^2.2.1",
-    "next-transpile-modules": "^10.0.1",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -24,6 +22,9 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "next": "14.2.3",
+    "next-compose-plugins": "^2.2.1",
+    "next-transpile-modules": "^10.0.1"
   }
 }
