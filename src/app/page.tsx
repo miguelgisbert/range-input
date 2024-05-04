@@ -1,4 +1,5 @@
 "use client"
+import React from 'react';
 import Range from "./components/range"; 
 
 export default function Home() {

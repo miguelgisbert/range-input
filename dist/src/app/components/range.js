@@ -137,7 +137,7 @@ var Range = function (_a) {
             setOverlap(false);
         }
     }, [range]);
-    return (<div style={{
+    return (react_1.default.createElement("div", { style: {
             display: "flex",
             alignContent: "center",
             height: "100px",
@@ -145,121 +145,114 @@ var Range = function (_a) {
             justifyContent: "center",
             alignItems: "center",
             cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
-        }}>
-      {editingMin && !selectable ? (<input type="number" value={inputMinValue} style={{ marginRight: "20px", width: "auto" }} onChange={function (e) { return setInputMinValue(Number(e.target.value)); }} onBlur={handleMinValueChange} onKeyDown={function (e) {
+        } },
+        editingMin && !selectable ? (react_1.default.createElement("input", { type: "number", value: inputMinValue, style: { marginRight: "20px", width: "auto" }, onChange: function (e) { return setInputMinValue(Number(e.target.value)); }, onBlur: handleMinValueChange, onKeyDown: function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleMinValueChange();
                 }
-            }}/>) : (<div onClick={function () { return setEditingMin(true); }} style={{
+            } })) : (react_1.default.createElement("div", { onClick: function () { return setEditingMin(true); }, style: {
                 width: "auto",
                 padding: "10px 20px",
                 fontSize: "12px",
                 cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
-            }}>
-            {minValue.toFixed(2)} €
-        </div>)}
-      <div ref={rangeRef} style={{
-            height: '10px',
-            width: '300px',
-            background: 'lightgray',
-            borderRadius: '5px',
-            position: 'relative',
-            userSelect: 'none',
-            cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
-        }} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-
-        {/* Lines for selectable values */}
-        {selectable && selectable.map(function (value, index) { return (<div key={index} style={{
-                position: 'absolute',
-                height: '20px',
-                width: '2px',
-                top: '-5px',
-                background: value >= range.min && value <= range.max ? 'dodgerblue' : 'lightgray',
-                left: "".concat(getPercentage(value), "%")
-            }}/>); })}
-
-        <div style={{
-            position: 'absolute',
-            background: 'dodgerblue',
-            boxShadow: '0px 0px 5px 1px rgba(0, 0, 0, 0.8)',
-            height: '100%',
-            cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default',
-            left: "".concat(getPercentage(range.min), "%"),
-            right: "".concat(100 - getPercentage(range.max), "%"),
-        }}/>
-        <div style={{
-            position: 'absolute',
-            top: hover === 'min' || dragging === 'min' ? '-6px' : '-4px',
-            width: hover === 'min' || dragging === 'min' ? '22px' : '18px',
-            height: hover === 'min' || dragging === 'min' ? '22px' : '18px',
-            background: 'white',
-            borderRadius: '50%',
-            cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'pointer',
-            boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
-            left: "".concat(getPercentage(range.min), "%"),
-            marginLeft: '-10px',
-            zIndex: maxValue - range.min < (maxValue - minValue) * 0.1 ? 10 : 0,
-            transition: 'width 0.2s, height 0.2s, top 0.2s',
-        }} onMouseDown={function (e) {
-            e.preventDefault();
-            setDragging('min');
-        }} onMouseEnter={function () { return setHover('min'); }} onMouseLeave={function () { return setHover(null); }}/>
-        <div style={{
-            position: 'absolute',
-            top: hover === 'max' || dragging === 'max' ? '-6px' : '-4px',
-            width: hover === 'max' || dragging === 'max' ? '22px' : '18px',
-            height: hover === 'max' || dragging === 'max' ? '22px' : '18px',
-            background: 'white',
-            borderRadius: '50%',
-            cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'pointer',
-            boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
-            left: "".concat(getPercentage(range.max), "%"),
-            marginLeft: '-10px',
-            zIndex: range.min - minValue < (maxValue - minValue) * 0.1 ? 10 : 0,
-            transition: 'width 0.2s, height 0.2s, top 0.2s',
-        }} onMouseDown={function (e) {
-            e.preventDefault();
-            setDragging('max');
-        }} onMouseEnter={function () { return setHover('max'); }} onMouseLeave={function () { return setHover(null); }}/>
-        
-        
-      <div style={{
-            position: 'absolute',
-            left: "".concat(getPercentage(range.min) - 3, "%"),
-            top: overlap ? '-30px' : '30px',
-            fontSize: "12px",
-            whiteSpace: 'nowrap',
-            cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
-        }}>
-          {range.min.toFixed(2)} €
-        </div>
-        <div style={{
-            position: 'absolute',
-            left: "".concat(getPercentage(range.max) - 3, "%"),
-            top: '30px',
-            fontSize: "12px",
-            whiteSpace: 'nowrap',
-            cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
-        }}>
-          {range.max.toFixed(2)} €
-        </div>
-      </div>
-      {editingMax && !selectable ? (<input type="number" value={inputMaxValue} style={{ marginLeft: "20px", width: "auto" }} onChange={function (e) { return setInputMaxValue(Number(e.target.value)); }} onBlur={handleMaxValueChange} onKeyDown={function (e) {
+            } },
+            minValue.toFixed(2),
+            " \u20AC")),
+        react_1.default.createElement("div", { ref: rangeRef, style: {
+                height: '10px',
+                width: '300px',
+                background: 'lightgray',
+                borderRadius: '5px',
+                position: 'relative',
+                userSelect: 'none',
+                cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
+            }, onMouseMove: handleMouseMove, onMouseUp: handleMouseUp },
+            selectable && selectable.map(function (value, index) { return (react_1.default.createElement("div", { key: index, style: {
+                    position: 'absolute',
+                    height: '20px',
+                    width: '2px',
+                    top: '-5px',
+                    background: value >= range.min && value <= range.max ? 'dodgerblue' : 'lightgray',
+                    left: "".concat(getPercentage(value), "%")
+                } })); }),
+            react_1.default.createElement("div", { style: {
+                    position: 'absolute',
+                    background: 'dodgerblue',
+                    boxShadow: '0px 0px 5px 1px rgba(0, 0, 0, 0.8)',
+                    height: '100%',
+                    cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default',
+                    left: "".concat(getPercentage(range.min), "%"),
+                    right: "".concat(100 - getPercentage(range.max), "%"),
+                } }),
+            react_1.default.createElement("div", { style: {
+                    position: 'absolute',
+                    top: hover === 'min' || dragging === 'min' ? '-6px' : '-4px',
+                    width: hover === 'min' || dragging === 'min' ? '22px' : '18px',
+                    height: hover === 'min' || dragging === 'min' ? '22px' : '18px',
+                    background: 'white',
+                    borderRadius: '50%',
+                    cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'pointer',
+                    boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
+                    left: "".concat(getPercentage(range.min), "%"),
+                    marginLeft: '-10px',
+                    zIndex: maxValue - range.min < (maxValue - minValue) * 0.1 ? 10 : 0,
+                    transition: 'width 0.2s, height 0.2s, top 0.2s',
+                }, onMouseDown: function (e) {
+                    e.preventDefault();
+                    setDragging('min');
+                }, onMouseEnter: function () { return setHover('min'); }, onMouseLeave: function () { return setHover(null); } }),
+            react_1.default.createElement("div", { style: {
+                    position: 'absolute',
+                    top: hover === 'max' || dragging === 'max' ? '-6px' : '-4px',
+                    width: hover === 'max' || dragging === 'max' ? '22px' : '18px',
+                    height: hover === 'max' || dragging === 'max' ? '22px' : '18px',
+                    background: 'white',
+                    borderRadius: '50%',
+                    cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'pointer',
+                    boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
+                    left: "".concat(getPercentage(range.max), "%"),
+                    marginLeft: '-10px',
+                    zIndex: range.min - minValue < (maxValue - minValue) * 0.1 ? 10 : 0,
+                    transition: 'width 0.2s, height 0.2s, top 0.2s',
+                }, onMouseDown: function (e) {
+                    e.preventDefault();
+                    setDragging('max');
+                }, onMouseEnter: function () { return setHover('max'); }, onMouseLeave: function () { return setHover(null); } }),
+            react_1.default.createElement("div", { style: {
+                    position: 'absolute',
+                    left: "".concat(getPercentage(range.min) - 3, "%"),
+                    top: overlap ? '-30px' : '30px',
+                    fontSize: "12px",
+                    whiteSpace: 'nowrap',
+                    cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
+                } },
+                range.min.toFixed(2),
+                " \u20AC"),
+            react_1.default.createElement("div", { style: {
+                    position: 'absolute',
+                    left: "".concat(getPercentage(range.max) - 3, "%"),
+                    top: '30px',
+                    fontSize: "12px",
+                    whiteSpace: 'nowrap',
+                    cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
+                } },
+                range.max.toFixed(2),
+                " \u20AC")),
+        editingMax && !selectable ? (react_1.default.createElement("input", { type: "number", value: inputMaxValue, style: { marginLeft: "20px", width: "auto" }, onChange: function (e) { return setInputMaxValue(Number(e.target.value)); }, onBlur: handleMaxValueChange, onKeyDown: function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleMaxValueChange();
                 }
-            }}/>) : (<div onClick={function () { return setEditingMax(true); }} style={{
+            } })) : (react_1.default.createElement("div", { onClick: function () { return setEditingMax(true); }, style: {
                 width: "auto",
                 margin: "0 20px",
                 fontSize: "12px",
                 zIndex: 100,
                 cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
-            }}>
-            {maxValue.toFixed(2)} €
-        </div>)}
-    </div>);
+            } },
+            maxValue.toFixed(2),
+            " \u20AC"))));
 };
 exports.default = Range;
-//# sourceMappingURL=range.jsx.map
+//# sourceMappingURL=range.js.map
