@@ -6,4 +6,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Range = void 0;
 var range_1 = require("./components/range");
 Object.defineProperty(exports, "Range", { enumerable: true, get: function () { return __importDefault(range_1).default; } });
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.jsx.map

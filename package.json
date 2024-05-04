@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "A range input component",
   "author": "Miguel Gisbert",
-  "main": "dist/src/app/index.js",
+  "main": "dist/src/app/index.tsx",
   "types": "dist/index.d.ts",
   "license": "GPL",
   "scripts": {

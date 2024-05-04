@@ -1,1 +1,1 @@
-export { default as Range } from "./components/range";
+export { default as Range } from './components/range';
