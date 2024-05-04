@@ -201,8 +201,9 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
       >
 
         {/* Lines for selectable values */}
-        {selectable && selectable.map(value => (
+        {selectable && selectable.map((value, index) => (
           <div 
+            key={index}
             style={{ 
               position: 'absolute', 
               height: '20px', 
