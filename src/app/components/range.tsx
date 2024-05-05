@@ -182,7 +182,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
           >
-            {minValue.toFixed(2)} €
+          {minValue !== undefined ? minValue.toFixed(2) : "NaN"} €
         </div>
       )}
       <div
@@ -282,7 +282,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
           cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
           }}
         >
-          {range.min.toFixed(2)} €
+          {range.min !== undefined ? range.min.toFixed(2) : "NaN"} €
         </div>
         <div 
           style={{ 
@@ -294,7 +294,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
           }}
         >
-          {range.max.toFixed(2)} €
+          {range.max !== undefined ? range.max.toFixed(2) : "NaN"} €
         </div>
       </div>
       {editingMax && !selectable ? (
@@ -322,7 +322,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
           >
-            {maxValue.toFixed(2)} €
+            {maxValue !== undefined ? maxValue.toFixed(2) : "NaN"} €
         </div>
       )}
     </div>
