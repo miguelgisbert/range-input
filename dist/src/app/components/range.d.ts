@@ -5,4 +5,4 @@ interface RangeProps {
     selectableValues?: number[];
 }
 declare const Range: React.FC<RangeProps>;
-export default Range;
+export { Range };

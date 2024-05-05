@@ -34,6 +34,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Range = void 0;
 var react_1 = __importStar(require("react"));
 var Range = function (_a) {
     var min = _a.min, max = _a.max, selectableValues = _a.selectableValues;
@@ -254,5 +255,5 @@ var Range = function (_a) {
             maxValue !== undefined ? maxValue.toFixed(2) : "NaN",
             " \u20AC"))));
 };
-exports.default = Range;
+exports.Range = Range;
 //# sourceMappingURL=range.js.map

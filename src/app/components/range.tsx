@@ -329,4 +329,4 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
   );
 };
 
-export default Range;
+export { Range };
