@@ -157,7 +157,7 @@ var Range = function (_a) {
                 fontSize: "12px",
                 cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             } },
-            minValue.toFixed(2),
+            minValue !== undefined ? minValue.toFixed(2) : "NaN",
             " \u20AC")),
         react_1.default.createElement("div", { ref: rangeRef, style: {
                 height: '10px',
@@ -227,7 +227,7 @@ var Range = function (_a) {
                     whiteSpace: 'nowrap',
                     cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
                 } },
-                range.min.toFixed(2),
+                range.min !== undefined ? range.min.toFixed(2) : "NaN",
                 " \u20AC"),
             react_1.default.createElement("div", { style: {
                     position: 'absolute',
@@ -237,7 +237,7 @@ var Range = function (_a) {
                     whiteSpace: 'nowrap',
                     cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : 'default'
                 } },
-                range.max.toFixed(2),
+                range.max !== undefined ? range.max.toFixed(2) : "NaN",
                 " \u20AC")),
         editingMax && !selectable ? (react_1.default.createElement("input", { type: "number", value: inputMaxValue, style: { marginLeft: "20px", width: "auto" }, onChange: function (e) { return setInputMaxValue(Number(e.target.value)); }, onBlur: handleMaxValueChange, onKeyDown: function (e) {
                 if (e.key === 'Enter') {
@@ -251,7 +251,7 @@ var Range = function (_a) {
                 zIndex: 100,
                 cursor: dragging === 'min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             } },
-            maxValue.toFixed(2),
+            maxValue !== undefined ? maxValue.toFixed(2) : "NaN",
             " \u20AC"))));
 };
 exports.default = Range;
