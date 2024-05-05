@@ -4,5 +4,5 @@ interface RangeProps {
     max: number;
     selectableValues?: number[];
 }
-declare const Range: React.FC<RangeProps>;
-export { Range };
+export declare const Range: React.FC<RangeProps>;
+export {};

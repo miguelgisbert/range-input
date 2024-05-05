@@ -6,7 +6,7 @@ interface RangeProps {
   selectableValues?: number[];
 }
 
-const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
+export const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
   const [range, setRange] = useState({ min, max });
   const [selectable, setSelectable] = useState<number[] | null>(null);
   const [dragging, setDragging] = useState<'min' | 'max' | null>(null);
@@ -328,5 +328,3 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
     </div>
   );
 };
-
-export { Range };
