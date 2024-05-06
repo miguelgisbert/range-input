@@ -9,5 +9,5 @@ declare module 'mg-range-input' {
   
     const Range: FC<RangeProps>;
   
-    export default Range;
+    export { Range };
   }

@@ -17,6 +17,7 @@
     "incremental": true,
     "outDir": "dist",
     "declaration": true,
+    "declarationDir": "./types",
     "sourceMap": true,
     "paths": {
       "@/*": [
@@ -31,8 +32,7 @@
     ]
   },
   "include": [
-    "src",
-    "types"
+    "src"
   ],
   "exclude": [
     "node_modules",
