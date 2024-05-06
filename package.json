@@ -1,6 +1,6 @@
 {
   "name": "mg-range-input",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "A range input component",
   "author": "Miguel Gisbert",
   "main": "dist/src/app/components/range.js",
