@@ -4,7 +4,7 @@
   "description": "A range input component",
   "author": "Miguel Gisbert",
   "main": "dist/src/app/components/range.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/app/index.d.ts",
   "license": "GPL",
   "scripts": {
     "dev": "next dev -p 8080",
