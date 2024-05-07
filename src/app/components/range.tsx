@@ -161,6 +161,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
       {editingMin && !selectable ? (
         <input
           type="number"
+          data-testid="min-input-input"
           value={inputMinValue}
           style={{marginRight: "20px", width: "auto"}}
           onChange={(e) => setInputMinValue(Number(e.target.value))}
@@ -181,6 +182,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
             fontSize: "12px",
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
+          data-testid="min-value-text"
           >
           {minValue !== undefined ? minValue.toFixed(2) : "NaN"} €
         </div>
@@ -204,6 +206,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
         {selectable && selectable.map((value, index) => (
           <div 
             key={index}
+            data-testid="selectable-value"
             style={{ 
               position: 'absolute', 
               height: '20px', 
@@ -300,6 +303,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
       {editingMax && !selectable ? (
         <input
           type="number"
+          data-testid="max-value-input"
           value={inputMaxValue}
           style={{marginLeft: "20px", width: "auto"}}
           onChange={(e) => setInputMaxValue(Number(e.target.value))}
@@ -321,6 +325,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
             zIndex: 100,
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
+            data-testid="max-value-text"
           >
             {maxValue !== undefined ? maxValue.toFixed(2) : "NaN"} €
         </div>

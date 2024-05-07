@@ -18,13 +18,7 @@
     "outDir": "dist",
     "declaration": true,
     "declarationDir": "./types",
-    "sourceMap": true,
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
-    "noEmit": false,
+    "noEmit": true,
     "plugins": [
       {
         "name": "next"
@@ -32,10 +26,12 @@
     ]
   },
   "include": [
-    "src"
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "**/*.test.tsx"
+    "node_modules"
   ]
 }
