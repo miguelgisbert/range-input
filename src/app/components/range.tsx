@@ -38,6 +38,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
     }
   }, [min, max, selectableValues]);
 
+  // Selection values control
   const change = useCallback(
     (clientX: number, type: 'min' | 'max') => {
       if (!rangeRef.current) return;
@@ -64,7 +65,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
           : { ...prev, max: Math.max(value, prev.min) }
       );
     },
-    [getValue, min, max, selectable]
+    [minValue, maxValue, selectable]
   );
 
   const handleMouseMove = useCallback(
