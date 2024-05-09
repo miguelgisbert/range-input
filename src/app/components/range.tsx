@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Alert } from '@mui/material';
 
 interface RangeProps {
   min: number;
@@ -7,7 +8,7 @@ interface RangeProps {
 }
 
 const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
-  const [range, setRange] = useState({ min, max });
+  const [range, setRange] = useState({ min: selectableValues ? selectableValues[1] : min + (max - min) * 0.25, max: selectableValues ? selectableValues[selectableValues.length - 2] : min + (max - min) * 0.75 });
   const [selectable, setSelectable] = useState<number[] | null>(null);
   const [dragging, setDragging] = useState<'min' | 'max' | null>(null);
   const rangeRef = useRef<HTMLDivElement>(null);
@@ -18,6 +19,7 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
   const [maxValue, setMaxValue] = useState<number>(max);
   const [inputMinValue, setInputMinValue] = useState<number>(min);
   const [inputMaxValue, setInputMaxValue] = useState<number>(max);
+  const [wrongInputAlertVisible, setWrongInputAlertVisible] = useState(false);
 
   const getPercentage = useCallback(
     (value: number) => Math.round(((value - minValue) / (maxValue - minValue)) * 100),
@@ -123,6 +125,10 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
         max: inputMinValue > prevRange.max ? inputMinValue : prevRange.max
       }));
     }
+    else {
+      setWrongInputAlertVisible(true);
+      setTimeout(() => setWrongInputAlertVisible(false), 3000);
+    }
   }
   const handleMaxValueChange = () => {
     if(!isNaN(inputMaxValue) && inputMaxValue > minValue) {
@@ -134,6 +140,10 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
         max: inputMaxValue < prevRange.max ? inputMaxValue : prevRange.max
       }));
     }
+    else {
+      setWrongInputAlertVisible(true);
+      setTimeout(() => setWrongInputAlertVisible(false), 3000);
+    }
   };
 
   // Avoid numbers overlapping
@@ -142,196 +152,201 @@ const Range: React.FC<RangeProps> = ({ min, max, selectableValues }) => {
     const threshold = (maxValue - minValue) * 0.15;
     if (Math.abs(range.min - range.max) < threshold) {
       setOverlap(true);
-    } else {
+    } 
+    else {
       setOverlap(false);
     }
   }, [range]);
   
   return (
-    <div 
-      style={{
-        display: "flex", 
-        alignContent: "center",
-        height: "100px",
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
-      }}
-      >
-      {editingMin && !selectable ? (
-        <input
-          type="number"
-          data-testid="min-input-input"
-          value={inputMinValue}
-          style={{marginRight: "20px", width: "auto"}}
-          onChange={(e) => setInputMinValue(Number(e.target.value))}
-          onBlur={handleMinValueChange}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              handleMinValueChange();
-            }
-          }}
-        />
-      ) : (
-        <div 
-          onClick={() => setEditingMin(true)}
-          style={{ 
-            width: "auto",
-            padding: "10px 20px",
-            fontSize: "12px",
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
-            }}
-          data-testid="min-value-text"
-          >
-          {minValue !== undefined ? minValue.toFixed(2) : "NaN"} €
-        </div>
-      )}
-      <div
-        ref={rangeRef}
-        style={{
-          height: '10px',
-          width: '300px',
-          background: 'lightgray',
-          borderRadius: '5px',
-          position: 'relative',
-          userSelect: 'none', 
-          cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-      >
+    <>
+      <Alert severity="error" style={{display:wrongInputAlertVisible ? "flex" : "none"}}>Wrong input (min must be lower than max).</Alert>
 
-        {/* Lines for selectable values */}
-        {selectable && selectable.map((value, index) => (
-          <div 
-            key={index}
-            data-testid="selectable-value"
-            style={{ 
-              position: 'absolute', 
-              height: '20px', 
-              width: '2px',
-              top: '-5px',  
-              background: value >= range.min && value <= range.max ? 'dodgerblue' : 'lightgray', 
-              left: `${getPercentage(value)}%` 
-            }} 
-          />
-        ))}
-
-        <div
-          style={{
-            position: 'absolute',
-            background: 'dodgerblue',
-            boxShadow: '0px 0px 5px 1px rgba(0, 0, 0, 0.8)',
-            height: '100%', 
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default',
-            left: `${getPercentage(range.min)}%`,
-            right: `${100 - getPercentage(range.max)}%`,
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: hover === 'min' || dragging === 'min' ? '-6px' : '-4px',
-            width:  hover === 'min' || dragging === 'min' ? '22px' : '18px',
-            height:  hover === 'min' || dragging === 'min' ? '22px' : '18px',
-            background: 'white',
-            borderRadius: '50%',
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer',
-            boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
-            left: `${getPercentage(range.min)}%`,
-            marginLeft: '-10px',
-            zIndex: maxValue - range.min < (maxValue - minValue) * 0.1 ? 10 : 0,
-            transition: 'width 0.2s, height 0.2s, top 0.2s',
-          }}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setDragging('min');
-          }}
-          onMouseEnter={() => setHover('min')}
-          onMouseLeave={() => setHover(null)}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: hover === 'max' || dragging === 'max' ? '-6px' : '-4px',
-            width:  hover === 'max' || dragging === 'max' ? '22px' : '18px',
-            height:  hover === 'max' || dragging === 'max' ? '22px' : '18px',
-            background: 'white',
-            borderRadius: '50%',
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer',
-            boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
-            left: `${getPercentage(range.max)}%`,
-            marginLeft: '-10px',
-            zIndex: range.min - minValue < (maxValue - minValue) * 0.1 ? 10 : 0,
-            transition: 'width 0.2s, height 0.2s, top 0.2s',
-          }}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setDragging('max');
-          }}
-          onMouseEnter={() => setHover('max')}
-          onMouseLeave={() => setHover(null)}
-        />
-        
-        
       <div 
         style={{
-          position: 'absolute',
-          left: `${getPercentage(range.min)-3}%`, 
-          top: overlap ? '-30px' : '30px',
-          fontSize: "12px",
-          whiteSpace: 'nowrap',
+          display: "flex", 
+          alignContent: "center",
+          height: "100px",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
           cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
-          }}
+        }}
         >
-          {range.min !== undefined ? range.min.toFixed(2) : "NaN"} €
-        </div>
+        {editingMin && !selectable ? (
+          <input
+            type="number"
+            data-testid="min-input-input"
+            value={inputMinValue}
+            style={{marginRight: "20px", width: "auto"}}
+            onChange={(e) => setInputMinValue(Number(e.target.value))}
+            onBlur={handleMinValueChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleMinValueChange();
+              }
+            }}
+          />
+        ) : (
+          <div 
+            onClick={() => setEditingMin(true)}
+            style={{ 
+              width: "auto",
+              padding: "10px 20px",
+              fontSize: "12px",
+              cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
+              }}
+            data-testid="min-value-text"
+            >
+            {minValue !== undefined ? minValue.toFixed(2) : "NaN"} €
+          </div>
+        )}
+        <div
+          ref={rangeRef}
+          style={{
+            height: '10px',
+            width: '300px',
+            background: 'lightgray',
+            borderRadius: '5px',
+            position: 'relative',
+            userSelect: 'none', 
+            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        >
+
+          {/* Lines for selectable values */}
+          {selectable && selectable.map((value, index) => (
+            <div 
+              key={index}
+              data-testid="selectable-value"
+              style={{ 
+                position: 'absolute', 
+                height: '20px', 
+                width: '2px',
+                top: '-5px',  
+                background: value >= range.min && value <= range.max ? 'dodgerblue' : 'lightgray', 
+                left: `${getPercentage(value)}%` 
+              }} 
+            />
+          ))}
+
+          <div
+            style={{
+              position: 'absolute',
+              background: 'dodgerblue',
+              boxShadow: '0px 0px 5px 1px rgba(0, 0, 0, 0.8)',
+              height: '100%', 
+              cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default',
+              left: `${getPercentage(range.min)}%`,
+              right: `${100 - getPercentage(range.max)}%`,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: hover === 'min' || dragging === 'min' ? '-6px' : '-4px',
+              width:  hover === 'min' || dragging === 'min' ? '22px' : '18px',
+              height:  hover === 'min' || dragging === 'min' ? '22px' : '18px',
+              background: 'white',
+              borderRadius: '50%',
+              cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer',
+              boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
+              left: `${getPercentage(range.min)}%`,
+              marginLeft: '-10px',
+              zIndex: maxValue - range.min < (maxValue - minValue) * 0.1 ? 10 : 0,
+              transition: 'width 0.2s, height 0.2s, top 0.2s',
+            }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setDragging('min');
+            }}
+            onMouseEnter={() => setHover('min')}
+            onMouseLeave={() => setHover(null)}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: hover === 'max' || dragging === 'max' ? '-6px' : '-4px',
+              width:  hover === 'max' || dragging === 'max' ? '22px' : '18px',
+              height:  hover === 'max' || dragging === 'max' ? '22px' : '18px',
+              background: 'white',
+              borderRadius: '50%',
+              cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'pointer',
+              boxShadow: '0px 0px 8px 4px rgba(0, 0, 0, 0.8)',
+              left: `${getPercentage(range.max)}%`,
+              marginLeft: '-10px',
+              zIndex: range.min - minValue < (maxValue - minValue) * 0.1 ? 10 : 0,
+              transition: 'width 0.2s, height 0.2s, top 0.2s',
+            }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setDragging('max');
+            }}
+            onMouseEnter={() => setHover('max')}
+            onMouseLeave={() => setHover(null)}
+          />
+          
+          
         <div 
-          style={{ 
+          style={{
             position: 'absolute',
-            left: `${getPercentage(range.max)-3}%`, 
-            top: '30px', 
+            left: `${getPercentage(range.min)-3}%`, 
+            top: overlap ? '-30px' : '30px',
             fontSize: "12px",
             whiteSpace: 'nowrap',
             cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
-          }}
-        >
-          {range.max !== undefined ? range.max.toFixed(2) : "NaN"} €
-        </div>
-      </div>
-      {editingMax && !selectable ? (
-        <input
-          type="number"
-          data-testid="max-value-input"
-          value={inputMaxValue}
-          style={{marginLeft: "20px", width: "auto"}}
-          onChange={(e) => setInputMaxValue(Number(e.target.value))}
-          onBlur={handleMaxValueChange}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              handleMaxValueChange();
-            }
-          }}
-        />
-      ) : (
-        <div 
-          onClick={() => setEditingMax(true)}
-          style={{ 
-            width: "auto",
-            margin: "0 20px",
-            fontSize: "12px",
-            zIndex: 100,
-            cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
             }}
-            data-testid="max-value-text"
           >
-            {maxValue !== undefined ? maxValue.toFixed(2) : "NaN"} €
+            {range.min !== undefined ? range.min.toFixed(2) : "NaN"} €
+          </div>
+          <div 
+            style={{ 
+              position: 'absolute',
+              left: `${getPercentage(range.max)-3}%`, 
+              top: '30px', 
+              fontSize: "12px",
+              whiteSpace: 'nowrap',
+              cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : 'default'
+            }}
+          >
+            {range.max !== undefined ? range.max.toFixed(2) : "NaN"} €
+          </div>
         </div>
-      )}
-    </div>
+        {editingMax && !selectable ? (
+          <input
+            type="number"
+            data-testid="max-value-input"
+            value={inputMaxValue}
+            style={{marginLeft: "20px", width: "auto"}}
+            onChange={(e) => setInputMaxValue(Number(e.target.value))}
+            onBlur={handleMaxValueChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleMaxValueChange();
+              }
+            }}
+          />
+        ) : (
+          <div 
+            onClick={() => setEditingMax(true)}
+            style={{ 
+              width: "auto",
+              margin: "0 20px",
+              fontSize: "12px",
+              zIndex: 100,
+              cursor: dragging ==='min' || dragging === 'max' ? 'col-resize' : selectable ? 'default' : 'pointer'
+              }}
+              data-testid="max-value-text"
+            >
+              {maxValue !== undefined ? maxValue.toFixed(2) : "NaN"} €
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
